@@ -168,7 +168,7 @@ Lütfen şunları değerlendir:
 
 Cevabın Türkçe, klinik ve net olsun. Tedavi önerisi verme — sadece veri yorumu ve model açıklaması yap. Her madde için ayrı bir paragraf yaz."""
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
     headers = {"Content-Type": "application/json"}
     body = {"contents": [{"parts": [{"text": prompt}]}]}
 
