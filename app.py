@@ -168,14 +168,23 @@ Lütfen şunları değerlendir:
 
 Cevabın Türkçe, klinik ve net olsun. Tedavi önerisi verme — sadece veri yorumu ve model açıklaması yap. Her madde için ayrı bir paragraf yaz."""
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
     headers = {"Content-Type": "application/json"}
     body = {"contents": [{"parts": [{"text": prompt}]}]}
-
-    resp = requests.post(url, headers=headers, data=json.dumps(body), timeout=30)
-    resp.raise_for_status()
-    result = resp.json()
-    return result["candidates"][0]["content"]["parts"][0]["text"]
+    models = ["gemini-2.0-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash-8b"]
+    import time
+    for model in models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+        for attempt in range(3):
+            resp = requests.post(url, headers=headers, data=json.dumps(body), timeout=30)
+            if resp.status_code == 429:
+                time.sleep(20)
+                continue
+            if resp.status_code == 404:
+                break
+            resp.raise_for_status()
+            result = resp.json()
+            return result["candidates"][0]["content"]["parts"][0]["text"]
+    raise Exception("Tüm modeller meşgul. Lütfen 1 dakika bekleyip tekrar deneyin.")
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
